@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Workspace Assistant
 
-## Getting Started
+Интеллектуальный ассистент для Google Workspace, который помогает управлять электронной почтой с помощью AI.
 
-First, run the development server:
+## Возможности
 
+- Просмотр и управление электронной почтой
+- Умная сортировка и фильтрация писем
+- Современный и удобный интерфейс
+- Интеграция с Gmail API
+
+## Технологии
+
+- Next.js 14
+- React
+- TypeScript
+- Material UI
+- Google APIs
+
+## Установка
+
+1. Клонируйте репозиторий:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/your-username/workspace-assistant.git
+cd workspace-assistant
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Установите зависимости:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Создайте проект в Google Cloud Console:
+   - Перейдите в [Google Cloud Console](https://console.cloud.google.com)
+   - Создайте новый проект
+   - Включите Gmail API
+   - Создайте учетные данные OAuth 2.0
+   - Скачайте учетные данные
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Создайте файл `.env.local` и добавьте ваши учетные данные:
+```
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_client_id
+NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=your_client_secret
+NEXT_PUBLIC_GOOGLE_REDIRECT_URI=http://localhost:3000/api/auth/callback
+```
 
-## Learn More
+5. Запустите приложение:
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Приложение будет доступно по адресу [http://localhost:3000](http://localhost:3000).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Структура проекта
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+workspace-assistant/
+├── app/
+│   ├── components/     # React компоненты
+│   ├── hooks/         # Пользовательские хуки
+│   ├── services/      # Сервисы для работы с API
+│   └── pages/         # Страницы приложения
+├── public/            # Статические файлы
+└── package.json       # Зависимости и скрипты
+```
 
-## Deploy on Vercel
+## Лицензия
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
