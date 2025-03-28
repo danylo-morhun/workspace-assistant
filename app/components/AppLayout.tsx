@@ -85,7 +85,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
-          <ListItemButton onClick={() => router.push('/important')}>
+          <ListItemButton onClick={() => router.push('/dashboard/important')}>
             <ListItemIcon>
               <StarIcon />
             </ListItemIcon>

@@ -99,7 +99,7 @@ export class GmailService {
     return data;
   }
 
-  async listEmails(pageSize?: number, page?: number, useCache: boolean = true): Promise<EmailMessage[]> {
+  async listEmails(pageSize?: number, page?: number, useCache: boolean = true, isImportant?: boolean): Promise<EmailMessage[]> {
     try {
       console.log('Starting listEmails');
       
@@ -110,7 +110,7 @@ export class GmailService {
       
       console.log('Fetching messages list...');
       const response = await this.fetchWithAuth(
-        `${GMAIL_API_BASE}/messages?maxResults=50`
+        `${GMAIL_API_BASE}/messages?maxResults=50${isImportant ? '&labelIds=IMPORTANT' : ''}`
       );
       console.log('Got messages list:', {
         messageCount: response.messages?.length || 0,

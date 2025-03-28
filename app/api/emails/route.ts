@@ -44,9 +44,10 @@ export async function GET(request: Request) {
     const page = parseInt(searchParams.get('page') || '1');
     const pageSize = parseInt(searchParams.get('pageSize') || '20');
     const useCache = searchParams.get('useCache') !== 'false';
+    const isImportant = searchParams.get('isImportant') === 'true';
     
     console.log('Token validation successful, fetching emails...');
-    const emails = await gmailService.listEmails(pageSize, page, useCache);
+    const emails = await gmailService.listEmails(pageSize, page, useCache, isImportant);
     console.log(`Successfully fetched ${emails.length} emails`);
     
     return NextResponse.json(emails);
