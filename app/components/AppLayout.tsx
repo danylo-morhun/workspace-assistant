@@ -93,7 +93,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
-          <ListItemButton onClick={() => router.push('/sent')}>
+          <ListItemButton onClick={() => router.push('/dashboard/sent')}>
             <ListItemIcon>
               <SendIcon />
             </ListItemIcon>
@@ -101,7 +101,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
-          <ListItemButton onClick={() => router.push('/trash')}>
+          <ListItemButton onClick={() => router.push('/dashboard/trash')}>
             <ListItemIcon>
               <DeleteIcon />
             </ListItemIcon>

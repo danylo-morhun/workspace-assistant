@@ -156,7 +156,7 @@ export default function EmailList({
                 edge="end"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onDelete(email.id);
+                  handleDeleteClick(e, email.id);
                 }}
                 sx={{ mr: 1 }}
               >

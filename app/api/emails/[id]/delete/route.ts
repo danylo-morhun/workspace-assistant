@@ -19,7 +19,18 @@ export async function POST(
     const gmailService = GmailService.getInstance();
     gmailService.setAccessToken(session.accessToken);
     
-    await gmailService.deleteEmail(params.id);
+    // Перевіряємо, чи лист знаходиться в кошику
+    const email = await gmailService.getEmail(params.id);
+    const isInTrash = email.labelIds?.includes('TRASH');
+
+    if (isInTrash) {
+      // Якщо лист в кошику, видаляємо його повністю
+      await gmailService.permanentlyDeleteEmail(params.id);
+    } else {
+      // Якщо лист не в кошику, переміщуємо його туди
+      await gmailService.deleteEmail(params.id);
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Failed to delete email:', error);

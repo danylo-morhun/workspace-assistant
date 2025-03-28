@@ -99,7 +99,7 @@ export class GmailService {
     return data;
   }
 
-  async listEmails(pageSize?: number, page?: number, useCache: boolean = true, isImportant?: boolean): Promise<EmailMessage[]> {
+  async listEmails(pageSize?: number, page?: number, useCache: boolean = true, label?: 'IMPORTANT' | 'SENT' | 'TRASH'): Promise<EmailMessage[]> {
     try {
       console.log('Starting listEmails');
       
@@ -110,16 +110,26 @@ export class GmailService {
       
       console.log('Fetching messages list...');
       const response = await this.fetchWithAuth(
-        `${GMAIL_API_BASE}/messages?maxResults=50${isImportant ? '&labelIds=IMPORTANT' : ''}`
+        `${GMAIL_API_BASE}/messages?maxResults=50${label ? `&labelIds=${label}` : ''}`
       );
       console.log('Got messages list:', {
         messageCount: response.messages?.length || 0,
         responseKeys: Object.keys(response)
       });
 
-      if (!response.messages || !Array.isArray(response.messages)) {
+      if (!response.messages) {
+        console.log('No messages found');
+        return [];
+      }
+
+      if (!Array.isArray(response.messages)) {
         console.error('Invalid response format:', response);
         throw new Error('Invalid response format from Gmail API');
+      }
+
+      if (response.messages.length === 0) {
+        console.log('Empty messages array');
+        return [];
       }
 
       console.log(`Processing ${response.messages.length} messages`);
@@ -134,12 +144,17 @@ export class GmailService {
         })
       );
 
+      // Фільтруємо листи, виключаючи видалені з усіх списків, крім кошика
+      const filteredEmails = emails.filter(email => 
+        label === 'TRASH' || !email.labelIds?.includes('TRASH')
+      );
+
       console.log('Successfully processed all emails');
       this.messageListCache = {
-        data: emails,
+        data: filteredEmails,
         timestamp: Date.now()
       };
-      return emails;
+      return filteredEmails;
     } catch (error) {
       console.error('Error in listEmails:', error);
       throw error;
@@ -238,6 +253,25 @@ export class GmailService {
       this.messageListCache = null;
     } catch (error) {
       console.error('Error deleting email:', error);
+      throw error;
+    }
+  }
+
+  async permanentlyDeleteEmail(id: string): Promise<void> {
+    try {
+      await this.fetchWithAuth(
+        `https://gmail.googleapis.com/gmail/v1/users/me/messages/${id}/delete`,
+        {
+          method: 'DELETE',
+        }
+      );
+      
+      if (this.emailsCache.has(id)) {
+        this.emailsCache.delete(id);
+      }
+      this.messageListCache = null;
+    } catch (error) {
+      console.error('Error permanently deleting email:', error);
       throw error;
     }
   }

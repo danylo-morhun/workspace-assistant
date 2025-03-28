@@ -17,7 +17,7 @@ export default function ImportantEmailsPage() {
         setLoading(true);
         setError(null);
         
-        const response = await fetch('/api/emails?isImportant=true');
+        const response = await fetch('/api/emails?label=IMPORTANT');
         
         if (!response.ok) {
           const errorData = await response.json();
