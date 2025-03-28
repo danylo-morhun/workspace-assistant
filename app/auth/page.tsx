@@ -30,7 +30,7 @@ export default function AuthPage() {
             width: '100%',
           }}
         >
-          <Typography component="h1" variant="h4" gutterBottom>
+          <Typography className='text-center' component="h1" variant="h4" gutterBottom>
             Ласкаво просимо до Workspace Assistant
           </Typography>
           <Typography variant="body1" color="text.secondary" align="center" sx={{ mb: 4 }}>
@@ -38,7 +38,7 @@ export default function AuthPage() {
           </Typography>
 
           <Button
-            variant="contained"
+            variant="text"
             startIcon={<GoogleIcon />}
             onClick={handleGoogleSignIn}
             size="large"
