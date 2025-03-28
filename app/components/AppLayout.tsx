@@ -109,7 +109,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
-          <ListItemButton onClick={() => router.push('/settings')}>
+          <ListItemButton onClick={() => router.push('/dashboard/settings')}>
             <ListItemIcon>
               <SettingsIcon />
             </ListItemIcon>

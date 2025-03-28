@@ -1,67 +1,69 @@
 'use client';
 
-import { Box, Typography, Paper, List, ListItem, ListItemText, Switch, Divider } from '@mui/material';
+import React from 'react';
+import { Box, Typography, Paper, List, ListItem, ListItemText, ListItemIcon, Divider } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { useState } from 'react';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import PaletteIcon from '@mui/icons-material/Palette';
+import SecurityIcon from '@mui/icons-material/Security';
+import LanguageIcon from '@mui/icons-material/Language';
 
 export default function SettingsPage() {
-  const [settings, setSettings] = useState({
-    notifications: true,
-    darkMode: false,
-    autoRefresh: true,
-  });
-
-  const handleToggle = (setting: keyof typeof settings) => {
-    setSettings(prev => ({
-      ...prev,
-      [setting]: !prev[setting]
-    }));
-  };
-
   return (
     <Paper sx={{ p: 3, mt: 2 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
         <SettingsIcon sx={{ mr: 1, color: 'primary.main' }} />
         <Typography variant="h5">Налаштування</Typography>
       </Box>
-      
+
       <List>
         <ListItem>
+          <ListItemIcon>
+            <NotificationsIcon />
+          </ListItemIcon>
           <ListItemText 
-            primary="Сповіщення" 
-            secondary="Отримувати сповіщення про нові листи"
-          />
-          <Switch
-            edge="end"
-            checked={settings.notifications}
-            onChange={() => handleToggle('notifications')}
+            primary="Сповіщення"
+            secondary="Налаштування сповіщень про нові листи"
           />
         </ListItem>
         <Divider />
+        
         <ListItem>
+          <ListItemIcon>
+            <PaletteIcon />
+          </ListItemIcon>
           <ListItemText 
-            primary="Темна тема" 
-            secondary="Увімкнути темну тему інтерфейсу"
-          />
-          <Switch
-            edge="end"
-            checked={settings.darkMode}
-            onChange={() => handleToggle('darkMode')}
+            primary="Тема"
+            secondary="Налаштування зовнішнього вигляду"
           />
         </ListItem>
         <Divider />
+        
         <ListItem>
+          <ListItemIcon>
+            <SecurityIcon />
+          </ListItemIcon>
           <ListItemText 
-            primary="Автооновлення" 
-            secondary="Автоматично оновлювати список листів"
+            primary="Безпека"
+            secondary="Налаштування безпеки та приватності"
           />
-          <Switch
-            edge="end"
-            checked={settings.autoRefresh}
-            onChange={() => handleToggle('autoRefresh')}
+        </ListItem>
+        <Divider />
+        
+        <ListItem>
+          <ListItemIcon>
+            <LanguageIcon />
+          </ListItemIcon>
+          <ListItemText 
+            primary="Мова"
+            secondary="Налаштування мови інтерфейсу"
           />
         </ListItem>
       </List>
+
+      <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+        Всі налаштування будуть доступні в наступних оновленнях
+      </Typography>
     </Paper>
   );
 } 
