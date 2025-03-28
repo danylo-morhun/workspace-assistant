@@ -21,6 +21,7 @@ import {
   Delete as DeleteIcon,
 } from '@mui/icons-material';
 import { EmailMessage } from '../types/email';
+import EmailList from '../components/EmailList';
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
@@ -86,7 +87,7 @@ export default function DashboardPage() {
       });
       setEmails(emails.map(email =>
         email.id === id
-          ? { ...email, isImportant: !isImportant }
+          ? { ...email, labelIds: isImportant ? [...(email.labelIds || []), 'IMPORTANT'] : email.labelIds?.filter(l => l !== 'IMPORTANT') }
           : email
       ));
     } catch (error) {
@@ -97,13 +98,20 @@ export default function DashboardPage() {
   const handleDelete = async (id: string) => {
     try {
       console.log('Deleting email:', id);
-      await fetch(`/api/emails/${id}`, {
-        method: 'DELETE',
+      await fetch(`/api/emails/${id}/delete`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
       setEmails(emails.filter(email => email.id !== id));
     } catch (error) {
       console.error('Error deleting email:', error);
     }
+  };
+
+  const handleEmailsUpdate = (updatedEmails: EmailMessage[]) => {
+    setEmails(updatedEmails);
   };
 
   if (status === 'loading') {
@@ -142,39 +150,12 @@ export default function DashboardPage() {
         Вхідні листи
       </Typography>
       <Paper>
-        <List>
-          {emails.map((email, index) => (
-            <React.Fragment key={email.id}>
-              <ListItem>
-                <ListItemText
-                  primary={email.headers?.subject?.[0] || 'Без теми'}
-                  secondary={
-                    <Typography component="span" variant="body2" color="text.primary">
-                      {email.headers?.from?.[0] || 'Невідомий відправник'}
-                    </Typography>
-                  }
-                />
-                <ListItemSecondaryAction>
-                  <IconButton
-                    edge="end"
-                    aria-label="important"
-                    onClick={() => handleToggleImportant(email.id, !email.isImportant)}
-                  >
-                    {email.isImportant ? <StarIcon color="primary" /> : <StarBorderIcon />}
-                  </IconButton>
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    onClick={() => handleDelete(email.id)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-              {index < emails.length - 1 && <Divider />}
-            </React.Fragment>
-          ))}
-        </List>
+        <EmailList
+          emails={emails}
+          onToggleImportant={handleToggleImportant}
+          onDelete={handleDelete}
+          onEmailsUpdate={handleEmailsUpdate}
+        />
       </Paper>
     </Box>
   );

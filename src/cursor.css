@@ -1,0 +1,25 @@
+.cursor-line {
+  position: relative;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.cursor-line::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #00ff00;
+  border-radius: 2px;
+  box-shadow: 0 0 8px #00ff00;
+  opacity: 0.8;
+} 

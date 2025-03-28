@@ -9,11 +9,15 @@ import {
   Avatar,
   Typography,
   IconButton,
-  Checkbox,
   Collapse,
   CircularProgress,
   Box,
   Paper,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
 } from '@mui/material';
 import {
   Star as StarIcon,
@@ -27,15 +31,19 @@ interface EmailListProps {
   emails: EmailMessage[];
   onToggleImportant: (id: string, isImportant: boolean) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
+  onEmailsUpdate?: (emails: EmailMessage[]) => void;
 }
 
 export default function EmailList({
   emails,
   onToggleImportant,
   onDelete,
+  onEmailsUpdate,
 }: EmailListProps) {
   const [expandedId, setExpandedId] = React.useState<string | null>(null);
   const [loadingContent, setLoadingContent] = React.useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+  const [emailToDelete, setEmailToDelete] = React.useState<string | null>(null);
 
   const handleToggleExpand = async (id: string) => {
     if (expandedId === id) {
@@ -52,13 +60,32 @@ export default function EmailList({
           e.id === id ? email : e
         );
         // Оновлюємо стан батьківського компонента
-        // Це можна зробити через callback
+        onEmailsUpdate?.(updatedEmails);
       } catch (error) {
         console.error('Error fetching email content:', error);
       } finally {
         setLoadingContent(null);
       }
     }
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    setEmailToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (emailToDelete) {
+      await onDelete(emailToDelete);
+      setDeleteDialogOpen(false);
+      setEmailToDelete(null);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setEmailToDelete(null);
   };
 
   if (emails.length === 0) {
@@ -89,15 +116,10 @@ export default function EmailList({
               }}
             >
               <ListItemAvatar>
-                <Avatar>{email.headers?.from?.[0]?.toUpperCase() || '?'}</Avatar>
+                <Avatar>
+                  {email.payload?.headers?.find(h => h.name === 'From')?.value?.[0]?.toUpperCase() || '?'}
+                </Avatar>
               </ListItemAvatar>
-              <Checkbox
-                edge="start"
-                checked={email.labelIds?.includes('IMPORTANT')}
-                onChange={(e) => onToggleImportant(email.id, e.target.checked)}
-                onClick={(e) => e.stopPropagation()}
-                sx={{ mr: 2 }}
-              />
               <ListItemText
                 primary={
                   <Typography
@@ -108,7 +130,7 @@ export default function EmailList({
                         : 'normal',
                     }}
                   >
-                    {email.headers?.subject || 'Без теми'}
+                    {email.payload?.headers?.find(h => h.name === 'Subject')?.value || 'Без теми'}
                   </Typography>
                 }
                 secondary={
@@ -117,7 +139,7 @@ export default function EmailList({
                     color="text.secondary"
                     sx={{ display: 'flex', alignItems: 'center' }}
                   >
-                    {email.headers?.from || 'Невідомий відправник'}
+                    {email.payload?.headers?.find(h => h.name === 'From')?.value || 'Невідомий відправник'}
                     <Typography
                       component="span"
                       variant="body2"
@@ -126,7 +148,7 @@ export default function EmailList({
                     >
                       •
                     </Typography>
-                    {new Date(parseInt(email.internalDate)).toLocaleDateString()}
+                    {new Date(parseInt(email.internalDate || '0')).toLocaleDateString()}
                   </Typography>
                 }
               />
@@ -189,6 +211,29 @@ export default function EmailList({
           </React.Fragment>
         ))}
       </List>
+
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={handleDeleteCancel}
+        aria-labelledby="delete-dialog-title"
+      >
+        <DialogTitle id="delete-dialog-title">
+          Підтвердження видалення
+        </DialogTitle>
+        <DialogContent>
+          <Typography>
+            Ви впевнені, що хочете видалити цей лист? Цю дію неможливо відмінити.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteCancel} color="primary">
+            Скасувати
+          </Button>
+          <Button onClick={handleDeleteConfirm} color="error" variant="contained">
+            Видалити
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 } 
